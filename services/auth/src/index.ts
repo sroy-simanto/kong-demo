@@ -11,6 +11,21 @@ app.get('/health', (_req, res) => {
     res.status(200).json({status: 'Auth Service is Running'});
 });
 
+app.get("/users", (req, res) => {
+  res.json([
+    {
+      id: 1,
+      name: "Simanto",
+      email: "simanto@example.com"
+    },
+    {
+      id: 2,
+      name: "Rahim",
+      email: "rahim@example.com"
+    }
+  ]);
+});
+
 app.use((_req, res) => {
     res.status(404).json({message: 'Not found'});
 });
