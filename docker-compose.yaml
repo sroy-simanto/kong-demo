@@ -1,0 +1,67 @@
+services:
+
+  # =========================
+  # AUTH SERVICE
+  # =========================
+  auth-service:
+    build:
+      context: ./services/auth
+    container_name: auth
+    env_file:
+      - ./services/auth/.env
+    expose:
+      - "4002"
+
+
+  # =========================
+  # INVENTORY SERVICE
+  # =========================
+  inventory-service:
+    build:
+      context: ./services/inventory
+    container_name: inventory
+    env_file:
+      - ./services/inventory/.env
+    expose:
+      - "4003"
+
+
+  # =========================
+  # PRODUCT SERVICE
+  # =========================
+  product-service:
+    build:
+      context: ./services/product
+    container_name: product
+    env_file:
+      - ./services/product/.env
+    expose:
+      - "4001"
+
+
+  # =========================
+  # KONG
+  # =========================
+  kong:
+    image: kong:3.6.0
+    container_name: kong
+
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+
+    volumes:
+      - ./kong.yaml:/kong/kong.yml:ro
+
+    ports:
+      - "8000:8000"   # Proxy
+      - "8443:8443"   # Proxy SSL
+      - "8001:8001"   # Admin API
+
+    depends_on:
+      - auth-service
+      - inventory-service
+      - product-service
